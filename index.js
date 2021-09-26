@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { getDay } = require("date-fns");
 
 const usersData = [
   {
@@ -7,16 +8,47 @@ const usersData = [
       password: "rabire",
     },
     lessons: {
-      monday: [{ name: "BoxeAnglaise", startHour: "17h45" }],
-      tuesday: [],
-      wednesday: [],
-      thursday: [],
-      friday: [],
-      saturaday: [],
-      sunday: [],
+      monday: [{ name: "BOXE ANGLAISE", startHour: "17h45" }],
+      tuesday: ["66"],
+      wednesday: ["uyuuu"],
+      thursday: ["hhh"],
+      friday: ["jhg"],
+      saturaday: ["lkl"],
+      sunday: [
+        { name: "JEET KUNE DO", startHour: "17h45" },
+        { name: "CAPOEIRA", startHour: "10h30" },
+      ],
     },
   },
 ];
+
+const dayNames = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturaday",
+];
+
+const lessonsId = {
+  "BOXE ANGLAISE": "MENUa-92",
+  "BOXE THAILANDAISE": "MENUa-93",
+  "JUJITSU BRESILIEN": "MENUa-106",
+  "BOXE FRANCAISE": "MENUa-94",
+  "BOXE AMERICAINE": "MENUa-95",
+  "CROSS TRAINING": "MENUa-97",
+  "KICK BOXING": "MENUa-103",
+  "KRAV MAGA": "MENUa-105",
+  "MMA FREE FIGHT": "MENUa-107",
+  GRAPPLING: "MENUa-98",
+  "JEET KUNE DO": "MENUa-99",
+  "KALI ESKRIMA": "MENUa-100",
+  CAPOEIRA: "MENUa-96",
+  JUDO: "MENUa-102",
+  "SELF DEFENSE CIVIL": "MENUa-108",
+};
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -34,10 +66,27 @@ const usersData = [
   );
 
   for (const user of usersData) {
-    await page.type("input[name=login]", user.credentials.username);
-    await page.type("input[name=password]", user.credentials.password);
-    await page.click('input[type="submit"]');
-  }
+    /* LOGIN */
+    try {
+      await page.type("input[name=login]", user.credentials.username);
+      await page.type("input[name=password]", user.credentials.password);
+      await page.click('input[type="submit"]');
+      await page.waitForSelector('div[id="infosSELECT"]');
+      //   await page.screenshot({ path: "screenshot.png" });
+    } catch (err) {
+      console.log(err);
+      throw `Error during login user ${user.credentials.username}`;
+    }
 
-  // await page.click('button[class="aOOlW  bIiDR  "]'); // accept button
+    /* REGISTRATION */
+    const today = new Date();
+    const nextWeekActivities = user.lessons[dayNames[getDay(today)]];
+
+    // for (const activity of nextWeekActivities) {
+    const activity = nextWeekActivities[0];
+
+    await page.click(`span[id=${lessonsId[activity.name]}]`);
+
+    // } // end for
+  }
 })();
