@@ -8,16 +8,13 @@ const usersData = [
       password: "rabire",
     },
     lessons: {
-      monday: [{ name: "BOXE ANGLAISE", startHour: "17h45" }],
-      tuesday: ["66"],
-      wednesday: ["uyuuu"],
-      thursday: ["hhh"],
-      friday: ["jhg"],
-      saturaday: ["lkl"],
-      sunday: [
-        { name: "JEET KUNE DO", startHour: "17h45" },
-        { name: "CAPOEIRA", startHour: "10h30" },
-      ],
+      monday: [{ name: "BOXE ANGLAISE", lessonIndex: 1 }],
+      tuesday: [{ name: "KICK BOXING", lessonIndex: 1 }],
+      wednesday: [],
+      thursday: [{ name: "BOXE ANGLAISE", lessonIndex: 6 }],
+      friday: [{ name: "KICK BOXING", lessonIndex: 2 }],
+      saturaday: [],
+      sunday: [],
     },
   },
 ];
@@ -72,20 +69,42 @@ const lessonsId = {
       await page.type("input[name=password]", user.credentials.password);
       await page.click('input[type="submit"]');
       await page.waitForSelector('div[id="infosSELECT"]');
-      //   await page.screenshot({ path: "screenshot.png" });
     } catch (err) {
       console.log(err);
       throw `Error during login user ${user.credentials.username}`;
     }
 
-    /* REGISTRATION */
+    /* SELECTING LESSON KIND */
     const today = new Date();
     const nextWeekActivities = user.lessons[dayNames[getDay(today)]];
-
-    // for (const activity of nextWeekActivities) {
     const activity = nextWeekActivities[0];
+    // for (const activity of nextWeekActivities) {
 
-    await page.click(`span[id=${lessonsId[activity.name]}]`);
+    await page.screenshot({ path: "wtf-screenshot.png" }); // FIXME: wtf should I wait screenshot to be able to click
+    await page.click(`span[id=${lessonsId[activity.name]}]`); // FIXME: // Find another waiy to find this spans
+    await page.waitForFunction(
+      `document.querySelector('div[id="loading"]').style.display === "none"`
+    );
+
+    /* CHANGE WEEK */
+    await page.click(
+      "button[class='fc-next-button fc-button fc-state-default fc-corner-left fc-corner-right']"
+    );
+    await page.waitForFunction(
+      `document.querySelector('div[id="loading"]').style.display === "none"`
+    );
+
+    /* SELECTING LESSON */
+    await page.evaluate(() => {
+      document.querySelectorAll('div[class="fc-bg"]')[1].click();
+    });
+
+    /* BOOKING */
+    await page
+      .waitForSelector(
+        'div[class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable"]'
+      )
+      .then(() => page.click("#boutonoptions > div:nth-child(3)"));
 
     // } // end for
   }
