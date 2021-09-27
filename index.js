@@ -100,11 +100,16 @@ const lessonsId = {
     });
 
     /* BOOKING */
-    await page
-      .waitForSelector(
-        'div[class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable"]'
+    await page.waitForSelector(".ui-dialog").then(() =>
+      page.click(
+        // 'div[style="display:inline; padding:5px; width:80px;height:18px;background-color:white; border:1px solid black; "]',
+        "#boutonoptions > div:nth-child(3)"
       )
-      .then(() => page.click("#boutonoptions > div:nth-child(3)"));
+    );
+
+    await page.keyboard.press("Enter");
+
+    // await page.click("#boutonoptions > div:nth-child(6)");
 
     // } // end for
   }
