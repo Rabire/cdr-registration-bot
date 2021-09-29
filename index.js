@@ -10,7 +10,7 @@ const usersData = [
     lessons: {
       monday: [{ name: "BOXE ANGLAISE", lessonIndex: 1 }],
       tuesday: [{ name: "KICK BOXING", lessonIndex: 1 }],
-      wednesday: [],
+      wednesday: [{ name: "GRAPPLING", lessonIndex: 1 }],
       thursday: [{ name: "BOXE ANGLAISE", lessonIndex: 6 }],
       friday: [{ name: "KICK BOXING", lessonIndex: 2 }],
       saturaday: [],
@@ -77,40 +77,42 @@ const lessonsId = {
     /* SELECTING LESSON KIND */
     const today = new Date();
     const nextWeekActivities = user.lessons[dayNames[getDay(today)]];
-    const activity = nextWeekActivities[0];
-    // for (const activity of nextWeekActivities) {
+    if (nextWeekActivities.length > 0) {
+      const activity = nextWeekActivities[0];
+      // for (const activity of nextWeekActivities) {
 
-    await page.screenshot({ path: "wtf-screenshot.png" }); // FIXME: wtf should I wait screenshot to be able to click
-    await page.click(`span[id=${lessonsId[activity.name]}]`); // FIXME: // Find another waiy to find this spans
-    await page.waitForFunction(
-      `document.querySelector('div[id="loading"]').style.display === "none"`
-    );
+      await page.screenshot({ path: "wtf-screenshot.png" }); // FIXME: wtf should I wait screenshot to be able to click
 
-    /* CHANGE WEEK */
-    await page.click(
-      "button[class='fc-next-button fc-button fc-state-default fc-corner-left fc-corner-right']"
-    );
-    await page.waitForFunction(
-      `document.querySelector('div[id="loading"]').style.display === "none"`
-    );
+      await page.click(`span[id=${lessonsId[activity.name]}]`); // FIXME: // Find another waiy to find this spans
+      await page.waitForFunction(
+        `document.querySelector('div[id="loading"]').style.display === "none"`
+      );
 
-    /* SELECTING LESSON */
-    await page.evaluate(() => {
-      document.querySelectorAll('div[class="fc-bg"]')[1].click();
-    });
+      /* CHANGE WEEK */
+      await page.click(
+        "button[class='fc-next-button fc-button fc-state-default fc-corner-left fc-corner-right']"
+      );
+      await page.waitForFunction(
+        `document.querySelector('div[id="loading"]').style.display === "none"`
+      );
 
-    /* BOOKING */
-    await page.waitForSelector(".ui-dialog").then(() =>
-      page.click(
-        // 'div[style="display:inline; padding:5px; width:80px;height:18px;background-color:white; border:1px solid black; "]',
-        "#boutonoptions > div:nth-child(3)"
-      )
-    );
+      /* SELECTING LESSON */
+      await page.evaluate(() => {
+        document.querySelectorAll('div[class="fc-bg"]')[1].click();
+      });
 
-    await page.keyboard.press("Enter");
+      /* BOOKING */
+      await page
+        .waitForSelector(".ui-dialog")
+        .then(() => page.click("#boutonoptions > div:nth-child(3)"));
 
-    // await page.click("#boutonoptions > div:nth-child(6)");
+      /* Validate popup */
+      page.on("dialog", async (dialog) => await dialog.dismiss());
 
-    // } // end for
+      // await page.click("#boutonoptions > div:nth-child(6)");
+
+      // } // end for
+    }
   }
+  // await browser.close();
 })();
