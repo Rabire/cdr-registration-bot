@@ -11,7 +11,7 @@ const usersData = [
       monday: [{ name: "BOXE ANGLAISE", lessonIndex: 1 }],
       tuesday: [{ name: "KICK BOXING", lessonIndex: 1 }],
       wednesday: [
-        // { name: "GRAPPLING", lessonIndex: 1 },
+        { name: "GRAPPLING", lessonIndex: 1 },
         { name: "CROSS TRAINING", lessonIndex: 4 },
       ],
       thursday: [{ name: "BOXE ANGLAISE", lessonIndex: 6 }],
@@ -90,33 +90,33 @@ const lessonsId = {
         );
 
         /* CHANGE WEEK */
-        await page.click(
-          "button[class='fc-next-button fc-button fc-state-default fc-corner-left fc-corner-right']"
-        );
+        await page.click(".fc-next-button");
         await page.waitForFunction(
           `document.querySelector('div[id="loading"]').style.display === "none"`
         );
 
-        // await page.screenshot({ path: "wtf1-screenshot.png" });
-        /* SELECTING LESSON */
+        /* TODO: SELECTING LESSON */
+        await page.waitForFunction(
+          `document.querySelectorAll('div[class="fc-bg"]').length > 1`
+        );
         let i = activity.lessonIndex;
         await page.evaluate((i) => {
           document.querySelectorAll('div[class="fc-bg"]')[i].click();
         }, i);
 
         /* BOOKING */
-        // await page
-        //   .waitForSelector(".ui-dialog")
-        //   .then(() => page.click("#boutonoptions > div:nth-child(3)"));
+        await page
+          .waitForSelector(".ui-dialog")
+          .then(() => page.click("#boutonoptions > div:nth-child(3)"));
 
         /* Validate popup */
-        // page.once("dialog", async function (dialog) {
-        //   await dialog.accept();
-        //   console.log(`next week's ${activity.name} class booked`);
-        // });
+        page.once("dialog", async function (dialog) {
+          await dialog.accept();
+          console.log(`next week's ${activity.name} class booked`);
+        });
       } // end for activity of nextWeekActivities
     }
   }
 
-  await browser.close();
+  // await browser.close();
 })();
