@@ -5,6 +5,7 @@ const usersData = require("./data-config.json").usersData;
 const { lessonsId, dayNames } = require("./static-data");
 
 (async () => {
+  /* LUNCH BROWSER */
   const browser = await puppeteer.launch({
     headless: false,
     args: ["--window-size=1000,800"],
@@ -35,39 +36,64 @@ const { lessonsId, dayNames } = require("./static-data");
     const nextWeekActivity = user.lessons[dayNames[getDay(today)]];
     if (!!nextWeekActivity) {
       /* SELECTING LESSON KIND */
-      await page.waitForFunction(
-        `document.querySelector('div[id="loading"]').style.display === "none"`
-      );
-      await page.click(`span[id=${lessonsId[nextWeekActivity.name]}]`); // FIXME: // Find another waiy to find this spans
-      await page.waitForFunction(
-        `document.querySelector('div[id="loading"]').style.display === "none"`
-      );
+      try {
+        await page.waitForFunction(
+          `document.querySelector('div[id="loading"]').style.display === "none"`
+        );
+        await page.click(`span[id=${lessonsId[nextWeekActivity.name]}]`); // FIXME: // Find another waiy to find this spans
+        await page.waitForFunction(
+          `document.querySelector('div[id="loading"]').style.display === "none"`
+        );
+      } catch (err) {
+        console.log(err);
+        throw `Error while selecting lesson kind ${nextWeekActivity.name}`;
+      }
 
       /* CHANGE WEEK */
-      await page.click(".fc-next-button");
-      await page.waitForFunction(
-        `document.querySelector('div[id="loading"]').style.display === "none"`
-      );
+      try {
+        await page.click(".fc-next-button");
+        await page.waitForFunction(
+          `document.querySelector('div[id="loading"]').style.display === "none"`
+        );
+      } catch (err) {
+        console.log(err);
+        throw `Error while changing week in calendar`;
+      }
 
-      /* TODO: SELECTING LESSON */
-      await page.waitForFunction(
-        `document.querySelectorAll('div[class="fc-bg"]').length > 1`
-      );
-      let i = nextWeekActivity.lessonIndex;
-      await page.evaluate((i) => {
-        document.querySelectorAll('div[class="fc-bg"]')[i].click();
-      }, i);
+      /* SELECTING LESSON */
+      try {
+        await page.waitForFunction(
+          `document.querySelectorAll('div[class="fc-bg"]').length > 1`
+        );
+        let i = nextWeekActivity.lessonIndex;
+        await page.evaluate((i) => {
+          document.querySelectorAll('div[class="fc-bg"]')[i].click();
+        }, i);
+      } catch (err) {
+        console.log(err);
+        throw `Error lesson selection`;
+      }
 
       /* BOOKING */
-      await page
-        .waitForSelector(".ui-dialog")
-        .then(() => page.click("#boutonoptions > div:nth-child(3)"));
+      try {
+        await page
+          .waitForSelector(".ui-dialog")
+          .then(() => page.click("#boutonoptions > div:nth-child(3)"));
+      } catch (err) {
+        console.log(err);
+        throw `Error while booking`;
+      }
 
       /* Validate popup */
-      page.once("dialog", async function (dialog) {
-        await dialog.accept();
-        console.log(`next week's ${nextWeekActivity.name} class booked`);
-      });
+      try {
+        page.once("dialog", async function (dialog) {
+          await dialog.accept();
+          console.log(`next week's ${nextWeekActivity.name} class booked`);
+        });
+      } catch (err) {
+        console.log(err);
+        throw `Error while closing popup`;
+      }
     }
   }
 
