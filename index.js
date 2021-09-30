@@ -8,16 +8,13 @@ const usersData = [
       password: "rabire",
     },
     lessons: {
-      monday: [{ name: "BOXE ANGLAISE", lessonIndex: 1 }],
-      tuesday: [{ name: "KICK BOXING", lessonIndex: 1 }],
-      wednesday: [
-        { name: "GRAPPLING", lessonIndex: 1 },
-        { name: "CROSS TRAINING", lessonIndex: 4 },
-      ],
-      thursday: [{ name: "BOXE ANGLAISE", lessonIndex: 6 }],
-      friday: [{ name: "KICK BOXING", lessonIndex: 2 }],
-      saturaday: [],
-      sunday: [],
+      monday: { name: "BOXE ANGLAISE", lessonIndex: 1 },
+      tuesday: { name: "KICK BOXING", lessonIndex: 1 },
+      wednesday: undefined,
+      thursday: { name: "BOXE ANGLAISE", lessonIndex: 6 },
+      friday: { name: "KICK BOXING", lessonIndex: 2 },
+      saturaday: undefined,
+      sunday: undefined,
     },
   },
 ];
@@ -78,45 +75,44 @@ const lessonsId = {
     }
 
     const today = new Date();
-    const nextWeekActivities = user.lessons[dayNames[getDay(today)]];
-    if (nextWeekActivities.length > 0) {
-      // const activity = nextWeekActivities[0];
-      for (const activity of nextWeekActivities) {
-        /* SELECTING LESSON KIND */
-        await page.screenshot({ path: "wtf-screenshot.png" }); // FIXME: wtf should I wait screenshot to be able to click
-        await page.click(`span[id=${lessonsId[activity.name]}]`); // FIXME: // Find another waiy to find this spans
-        await page.waitForFunction(
-          `document.querySelector('div[id="loading"]').style.display === "none"`
-        );
+    const nextWeekActivity = user.lessons[dayNames[getDay(today)]];
+    if (!!nextWeekActivity) {
+      /* SELECTING LESSON KIND */
+      await page.waitForFunction(
+        `document.querySelector('div[id="loading"]').style.display === "none"`
+      );
+      await page.click(`span[id=${lessonsId[nextWeekActivity.name]}]`); // FIXME: // Find another waiy to find this spans
+      await page.waitForFunction(
+        `document.querySelector('div[id="loading"]').style.display === "none"`
+      );
 
-        /* CHANGE WEEK */
-        await page.click(".fc-next-button");
-        await page.waitForFunction(
-          `document.querySelector('div[id="loading"]').style.display === "none"`
-        );
+      /* CHANGE WEEK */
+      await page.click(".fc-next-button");
+      await page.waitForFunction(
+        `document.querySelector('div[id="loading"]').style.display === "none"`
+      );
 
-        /* TODO: SELECTING LESSON */
-        await page.waitForFunction(
-          `document.querySelectorAll('div[class="fc-bg"]').length > 1`
-        );
-        let i = activity.lessonIndex;
-        await page.evaluate((i) => {
-          document.querySelectorAll('div[class="fc-bg"]')[i].click();
-        }, i);
+      /* TODO: SELECTING LESSON */
+      await page.waitForFunction(
+        `document.querySelectorAll('div[class="fc-bg"]').length > 1`
+      );
+      let i = nextWeekActivity.lessonIndex;
+      await page.evaluate((i) => {
+        document.querySelectorAll('div[class="fc-bg"]')[i].click();
+      }, i);
 
-        /* BOOKING */
-        await page
-          .waitForSelector(".ui-dialog")
-          .then(() => page.click("#boutonoptions > div:nth-child(3)"));
+      /* BOOKING */
+      await page
+        .waitForSelector(".ui-dialog")
+        .then(() => page.click("#boutonoptions > div:nth-child(3)"));
 
-        /* Validate popup */
-        page.once("dialog", async function (dialog) {
-          await dialog.accept();
-          console.log(`next week's ${activity.name} class booked`);
-        });
-      } // end for activity of nextWeekActivities
+      /* Validate popup */
+      page.once("dialog", async function (dialog) {
+        await dialog.accept();
+        console.log(`next week's ${nextWeekActivity.name} class booked`);
+      });
     }
   }
 
-  // await browser.close();
+  await browser.close();
 })();
