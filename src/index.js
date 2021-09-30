@@ -1,23 +1,7 @@
 const puppeteer = require("puppeteer");
 const { getDay } = require("date-fns");
 
-const usersData = [
-  {
-    credentials: {
-      username: "rabireh@outlook.fr",
-      password: "rabire",
-    },
-    lessons: {
-      monday: { name: "BOXE ANGLAISE", lessonIndex: 1 },
-      tuesday: { name: "KICK BOXING", lessonIndex: 1 },
-      wednesday: undefined,
-      thursday: { name: "BOXE ANGLAISE", lessonIndex: 6 },
-      friday: { name: "KICK BOXING", lessonIndex: 2 },
-      saturaday: undefined,
-      sunday: undefined,
-    },
-  },
-];
+const usersData = require("./data-config.json").usersData;
 
 const dayNames = [
   "sunday",

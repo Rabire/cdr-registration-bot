@@ -1,0 +1,19 @@
+{
+  "usersData": [
+    {
+      "credentials": {
+        "username": "rabireh@outlook.fr",
+        "password": "rabire"
+      },
+      "lessons": {
+        "monday": { "name": "BOXE ANGLAISE", "lessonIndex": 1 },
+        "tuesday": { "name": "KICK BOXING", "lessonIndex": 1 },
+        "wednesday": null,
+        "thursday": { "name": "JUDO", "lessonIndex": 3 },
+        "friday": { "name": "KICK BOXING", "lessonIndex": 2 },
+        "saturaday": null,
+        "sunday": null
+      }
+    }
+  ]
+}
