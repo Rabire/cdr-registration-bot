@@ -1,10 +1,17 @@
 const puppeteer = require("puppeteer");
 const { getDay } = require("date-fns");
+const cron = require("node-cron");
 
 const usersData = require("./data-config.json").usersData;
 const { lessonsId, dayNames } = require("./static-data");
 
-(async () => {
+cron.schedule("00 00 * * *", function () {
+  botWork();
+});
+
+const botWork = async () => {
+  console.log("botWork running");
+
   /* LUNCH BROWSER */
   const browser = await puppeteer.launch({
     headless: false,
@@ -95,7 +102,9 @@ const { lessonsId, dayNames } = require("./static-data");
         throw `Error while closing popup`;
       }
     }
+
+    console.log("bot work done");
   }
 
   await browser.close();
-})();
+};
