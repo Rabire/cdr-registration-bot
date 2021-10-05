@@ -6,10 +6,10 @@
         "password": "rabire"
       },
       "lessons": {
-        "monday": null,
+        "monday": { "name": "BOXE ANGLAISE", "lessonIndex": 1 },
         "tuesday": { "name": "KICK BOXING", "lessonIndex": 1 },
         "wednesday": null,
-        "thursday": { "name": "BOXE ANGLAISE", "lessonIndex": 7 },
+        "thursday": null,
         "friday": { "name": "KICK BOXING", "lessonIndex": 2 },
         "saturaday": null,
         "sunday": null

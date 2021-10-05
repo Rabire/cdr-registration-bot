@@ -5,7 +5,7 @@ const cron = require("node-cron");
 const usersData = require("./data-config.json").usersData;
 const { lessonsId, dayNames } = require("./static-data");
 
-cron.schedule("00 00 * * *", function () {
+cron.schedule("21 00 * * *", function () {
   botWork();
 });
 
