@@ -1,13 +1,9 @@
 const puppeteer = require("puppeteer");
 const { getDay } = require("date-fns");
-const cron = require("node-cron");
+// const cron = require("node-cron");
 
 const usersData = require("./data-config.json").usersData;
 const { lessonsId, dayNames } = require("./static-data");
-
-cron.schedule("21 00 * * *", function () {
-  botWork();
-});
 
 const botWork = async () => {
   console.log("botWork running");
@@ -108,3 +104,9 @@ const botWork = async () => {
 
   await browser.close();
 };
+
+// cron.schedule("21 00 * * *", function () {
+//   botWork();
+// });
+
+botWork();

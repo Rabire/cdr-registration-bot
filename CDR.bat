@@ -1,0 +1,1 @@
+cd C:\dev\cdr-registration-bot && npm start
